@@ -29,11 +29,52 @@ int binarySearch(int arr[], int n, int target, int excludeIndex)
     while (start <= end)
     {
         int mid = start + (end - start) / 2;
+
+        if (arr[mid] == target && mid != excludeIndex)
+        {
+            return mid; // Return index if target is found and not excluded
+        }
+        else if (arr[mid] < target)
+        {
+            start = mid + 1; // Move start to mid + 1
+        }
+        else
+        {
+            end = mid - 1; // Move end to mid - 1
+        }
     }
+    return -1;
 }
 
 void findTargetSumIndices(int arr[], int n, int target)
 {
+    int used[n] = {0}; // Array to track used indices
+    int found = 0;     // Flag to track if any pair is found
+
+    for (int i = 0; i < n; i++)
+    {
+        if (used[i]) // Skip if this index is already used
+            continue;
+
+        int firstElement = arr[i];
+        int remainingTarget = target - firstElement;
+
+        // Search for the remaining value in the array
+        int index = binarySearch(arr, n, remainingTarget, i);
+
+        if (index != -1 && !used[index]) // Ensure the second index is also unused
+        {
+            cout << "Pair found at indices " << i << " " << index << endl;
+            used[i] = 1;     // Mark the current index as used
+            used[index] = 1; // Mark the found index as used
+            found = 1;
+        }
+    }
+
+    if (!found)
+    {
+        printf("No pairs found for the target sum.\n");
+    }
 }
 
 int main()
