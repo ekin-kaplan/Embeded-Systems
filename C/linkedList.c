@@ -5,7 +5,7 @@ struct Node
 {
     int data;
     struct Node *next;
-}; // define node structure for linked list.
+};
 
 // Function to create a new node
 struct Node *createNode(int value)
