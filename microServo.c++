@@ -1,4 +1,5 @@
-potansiyometrenin ilk pinini(en sol) 3.3 v a bağladım, ortası gnd, sağı a0 pinine bağladım.#include<Servo.h> const int potPin = A0; // Potansiyometre sinyal pini A0'a bağlı
+#include <Servo.h>
+const int potPin = A0; // Potansiyometre sinyal pini A0'a bağlı
 int potValue = 0;
 
 Servo servo1; // 1. Servo
@@ -27,8 +28,6 @@ void setup()
         pinMode(leds[i], OUTPUT);
     }
 
-    pinMode(potPin, INPUT);
-
     servo1.attach(9);  // 1. Servo 9. pine bağlı
     servo2.attach(10); // 2. Servo 10. pine bağlı
     servo3.attach(11); // 3. Servo 11. pine bağlı
@@ -39,6 +38,7 @@ void setup()
 
     attachInterrupt(digitalPinToInterrupt(2), toggleMode, FALLING);
     Serial.begin(9600);
+    pinMode(potPin, INPUT);
 }
 
 void loop()
@@ -58,6 +58,9 @@ void loop()
         break;
     case 2:
         allActive();
+        break;
+    case 3:
+        potantioServo();
         break;
     }
 }
@@ -102,6 +105,26 @@ void allActive()
     delay(500);
 }
 
+void potantioServo()
+{
+    if (potValue < 125)
+    {
+        sequentialLEDs();
+    }
+    else if (potValue < 225)
+    {
+        followLEDsWithServos();
+    }
+    else if (potValue < 675)
+    {
+        allActive();
+    }
+    else
+    {
+        Serial.println("potansiyometre max değerde");
+    }
+}
+
 void toggleMode()
 {
     unsigned long currentTime = millis();
@@ -109,7 +132,7 @@ void toggleMode()
     // Debounce kontrolü
     if (currentTime - lastDebounceTime > debounceDelay)
     {
-        mode = (mode + 1) % 3; // Mod durumunu artır ve sıfırla
+        mode = (mode + 1) % 4; // Mod durumunu artır ve sıfırla
         Serial.print("Yeni mod: ");
         Serial.println(mode);
 
